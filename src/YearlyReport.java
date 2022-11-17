@@ -22,7 +22,7 @@ public class YearlyReport {
             boolean isExpense = Boolean.parseBoolean(parts[2]);
 
             if (!monthsData.containsKey(month)) {
-                monthsData.put(month, new YearlyReportMonth(month));
+              monthsData.put(month, new YearlyReportMonth(month));
             }
 
             YearlyReportMonth oneMonthData = monthsData.get(month);
@@ -32,30 +32,39 @@ public class YearlyReport {
                 oneMonthData.amount += amount;
             }
         }
-        System.out.println("Считывание готового отчета завершено успешно");
+        System.out.println("Считывание годового отчета завершено успешно");
     }
 
-    public int sumProfit(int month) { // подсчет прибыли за месяц в году
-        int profit;
+
+    public int sumIncome(int month) { // подсчет дохода за месяц в году
+        int income;
         YearlyReportMonth oneMonth = monthsData.get(month);
-        profit = oneMonth.amount - oneMonth.expenses;
+        income = oneMonth.amount;
 
-        return profit;
+        return income;
+    }
+    public int sumExpense(int month) { // подсчет расходов за месяц в году
+        int expense;
+        YearlyReportMonth oneMonth = monthsData.get(month);
+        expense = oneMonth.expenses;
+
+        return expense;
     }
 
-    public void monthProfit() { // расчет прибыли по всем месяцам в году
+
+        public void monthProfit() { // расчет прибыли по всем месяцам в году
         for(YearlyReportMonth oneMonthData : monthsData.values()) {
             System.out.println("месяц " + oneMonthData.month + " прибыль: " + (oneMonthData.amount - oneMonthData.expenses));
         }
-    }
+        }
 
-    public void incomeYear() { //расчет среднего дохода за всемесяцы в году
+        public void incomeYear() { //расчет среднего дохода за всемесяцы в году
         int sumIncome = 0;
         int i = 0;
         for (YearlyReportMonth oneMonthData : monthsData.values()) {
             sumIncome += oneMonthData.amount;
             i++;
-        }
+    }
         System.out.println("Средний доход за все месяцы в году: " + (sumIncome/i));
     }
 
@@ -76,5 +85,5 @@ public class YearlyReport {
             System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
             return null;
         }
+        }
     }
-}

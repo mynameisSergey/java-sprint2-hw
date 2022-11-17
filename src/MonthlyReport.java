@@ -4,9 +4,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 
-
 public class MonthlyReport {
-    public static HashMap<String, MonthData> months = new HashMap<>();
+
+    public HashMap<String, MonthData> months = new HashMap<>();
 
     public void oneMonthReport(String path) {
 
@@ -42,15 +42,23 @@ public class MonthlyReport {
     }
 
 
-    public Integer monthProfit() { // расчет прибыли по месяцу
-        int profit = 0;
-        for(MonthData  oneMonth: months.values()) {
-            profit += oneMonth.income - MonthData.expense;
+    public Integer monthIncome() { // расчет дохода по месяцу
+        int income = 0;
+        for (MonthData oneMonth : months.values()) {
+            income += oneMonth.income;
         }
-        return profit;
+        return income;
     }
 
-    public static String maxProfit() { // максимальная прибыль за товар
+    public Integer monthExpense() { // расчет расходов по месяцу
+        int expense = 0;
+        for (MonthData oneMonth : months.values()) {
+            expense += oneMonth.expense;
+        }
+        return expense;
+    }
+
+    public String maxProfit() { // максимальная прибыль за товар
         int max = 0;
         String name = "";
         for (String itemName : months.keySet()) {
@@ -63,16 +71,16 @@ public class MonthlyReport {
         return name + " " + max;
     }
 
-    public static String maxSpending() { // максимальная трата на товар
+    public String maxSpending() { // максимальная трата на товар
         int max = 0;
         String name = "";
         for (String itemName : months.keySet()) {
             MonthData monthData = months.get(itemName);
-            if (max < MonthData.expense) {
-                max = MonthData.expense;
+            if (max < monthData.expense) {
+                max = monthData.expense;
                 name = monthData.itemName;
             }
         }
         return name + " " + max;
-    }
+        }
 }

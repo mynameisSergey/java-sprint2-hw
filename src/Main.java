@@ -9,59 +9,68 @@ public class Main {
         System.out.println("Введите команду");
         Scanner scanner = new Scanner(System.in);
         YearlyReport yearlyReport = new YearlyReport(2021, "resources/y.2021.csv");
-        MonthlyReport monthlyReport = new MonthlyReport();
-        ArrayList<MonthlyReport> oneMonth = new ArrayList<>();
 
-        for (int i = 1; i<=3; i++) {
-            monthlyReport = new MonthlyReport();
-        }
+        ArrayList<MonthlyReport> oneMonth = new ArrayList<>();
 
         while (true) {
             printMenu();
             int command = scanner.nextInt();
             if (command == 1) {
+
                 for (int m = 1; m <= 3; m++) {
+                    MonthlyReport monthlyReport = new MonthlyReport();
                     monthlyReport.oneMonthReport("resources/m.20210" + m + ".csv");
-                    oneMonth.add(monthlyReport);
+                    if (monthlyReport == null) {
+                        System.out.println("Произошда ошибка. Такого отчета не существует");
+                    } else {
+
+                        oneMonth.add(monthlyReport);
+                    }
                 }
-                System.out.println("Отчеты по каждому месяцу считаны");
+                    System.out.println("Отчеты по каждому месяцу считаны");
+
             }
             if (command == 2) {
                 yearlyReport = new YearlyReport(2021, "resources/y.2021.csv");
             }
             if (command == 3) {
-                for (int i = 0 ; i < 3; i++) {
-                    int profitMonth;
-                    monthlyReport = oneMonth.get(i);
-                    profitMonth = monthlyReport.monthProfit();
-                    if (yearlyReport.sumProfit(i+1) == profitMonth) {
-                        System.out.println("Сверка отчетов завершена успешно");
-                    } else {
-                        System.out.println("В " + (i+1) + " месяце допущена ошибка");
+                if ((oneMonth != null) && (yearlyReport != null)) {
+                    for (int i = 0; i < 3; i++) {
+                        int incomeMonth = oneMonth.get(i).monthIncome();  // расчет дохода по месяцу
+                        int expenseMonth = oneMonth.get(i).monthExpense(); // расчет расходов по месяцу
+
+                        int incomeYear = yearlyReport.sumIncome(i + 1); // подсчет дохода за месяц в году
+                        int expenseYear = yearlyReport.sumExpense(i + 1); // подсчет расходов за месяц в году
+
+                        if (incomeMonth != incomeYear && expenseMonth != expenseYear) {
+                            System.out.println("В " + (i + 1) + " месяце допущена ошибка");
+                        }
+
+                    }
+                    System.out.println("Сверка отчетов завершена успешно");
+                }
+            }
+                if (command == 4) {
+                    for(int i = 0; i < 3; i++) {
+
+                        System.out.println("Данные за " + (i+1) + " месяц:");
+                        System.out.println("Самая высокая прибыль - " + oneMonth.get(i).maxProfit() + " руб.");
+                      System.out.println("Самая большая трата - " + oneMonth.get(i).maxSpending() + " руб.");
+                    }
+                }
+                if (command == 5) {
+                    System.out.println("Информация об отчете за 2021 год");
+                    yearlyReport.incomeYear();
+                    yearlyReport.expenseYear();
+                    yearlyReport.monthProfit();
+                } else {
+                    if (command == 0){
+                        System.out.println("До новых встречь!");
+                        break;
                     }
                 }
             }
-            if (command == 4) {
-                for(int i = 0; i < 3; i++) {
-
-                    System.out.println("Данные за " + (i+1) + " месяц:");
-                    System.out.println("Самая высокая прибыль по товару " + monthlyReport.maxProfit() + " рублей");
-                    System.out.println("Самая большая трата по товару " + monthlyReport.maxSpending() + " рублей");
-                }
-            }
-            if (command == 5) {
-                System.out.println("Информация об отчете за 2021 год");
-                yearlyReport.incomeYear();
-                yearlyReport.expenseYear();
-                yearlyReport.monthProfit();
-            } else {
-                if (command == 0){
-                    System.out.println("До новых встречь!");
-                    break;
-                }
-            }
         }
-    }
 
 
     public static void printMenu() {
@@ -71,7 +80,7 @@ public class Main {
         System.out.println("3 - Сверить отчеты");
         System.out.println("4 - Вывести информацию о всех месячных отчётах");
         System.out.println("5 - Вывести информацию о годовом отчете");
-    }
+        }
 }
 
 

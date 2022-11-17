@@ -3,8 +3,9 @@ public class MonthData {
     public int quantity;
     public  int sumOfOne;
     public boolean isExpense;
-    public static int income;
-    public static int expense;
+    public int income;
+    public int expense;
+
 
 
     public MonthData(String itemName, int quantity, int sumOfOne, boolean isExpense){
