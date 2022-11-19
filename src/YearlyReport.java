@@ -2,17 +2,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Objects;
+
 public class YearlyReport {
     public int year;
+    public String path;
     public HashMap<Integer, YearlyReportMonth> monthsData = new HashMap<>();
 
 
     public YearlyReport(int year, String path) {
         this.year = year;
+        this.path = path;
+    }
 
-        String content = readFileContentsOrNull(path); // << содержимое файла
-        assert content != null;
-        String[] lines = content.split("\n"); // массив строк
+public void yearMonth() {
+    String content = readFileContentsOrNull(path); // << содержимое файла
+    if (content != null) {
+
+        String[] lines = Objects.requireNonNull(content).split("\n"); // массив строк
 
         for (int i = 1; i < lines.length; i++) {
             String line = lines[i]; //"01, 350000, true"
@@ -22,7 +29,7 @@ public class YearlyReport {
             boolean isExpense = Boolean.parseBoolean(parts[2]);
 
             if (!monthsData.containsKey(month)) {
-              monthsData.put(month, new YearlyReportMonth(month));
+                monthsData.put(month, new YearlyReportMonth(month));
             }
 
             YearlyReportMonth oneMonthData = monthsData.get(month);
@@ -34,19 +41,24 @@ public class YearlyReport {
         }
         System.out.println("Считывание годового отчета завершено успешно");
     }
+}
+
 
 
     public int sumIncome(int month) { // подсчет дохода за месяц в году
-        int income;
+        int income = 0;
         YearlyReportMonth oneMonth = monthsData.get(month);
-        income = oneMonth.amount;
-
+        if(oneMonth != null) {
+            income = oneMonth.amount;
+        }
         return income;
     }
     public int sumExpense(int month) { // подсчет расходов за месяц в году
-        int expense;
+        int expense = 0;
         YearlyReportMonth oneMonth = monthsData.get(month);
-        expense = oneMonth.expenses;
+        if(oneMonth != null) {
+            expense = oneMonth.expenses;
+        }
 
         return expense;
     }
@@ -82,7 +94,7 @@ public class YearlyReport {
         try {
             return Files.readString(Path.of(path));
         } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            System.out.println("Невозможно прочитать файл с годовым отчётом. Возможно, файл не находится в нужной директории.");
             return null;
         }
         }

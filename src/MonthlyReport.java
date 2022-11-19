@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class MonthlyReport {
@@ -9,25 +10,26 @@ public class MonthlyReport {
     public HashMap<String, MonthData> months = new HashMap<>();
 
     public void oneMonthReport(String path) {
-
         String content = readFileContentsOrNull(path);
-        assert content != null;
-        String[] lines = content.split("\n");
-        for (int i = 1; i < lines.length; i++) {
-            String line = lines[i];
-            String[] parts = line.split(",");
-            String itemName = parts[0];
-            boolean isExpense = Boolean.parseBoolean(parts[1]);
-            int quantity = Integer.parseInt(parts[2]);
-            int sumOfOne = Integer.parseInt(parts[3]);
-            if (!months.containsKey(itemName)) {
-                months.put(itemName, new MonthData(itemName, quantity, sumOfOne, isExpense));
-            }
-            MonthData oneData = months.get(itemName);
-            if (isExpense) {
-                oneData.expense = quantity * sumOfOne;
-            } else {
-                oneData.income = quantity * sumOfOne;
+        if (content == null) {
+        } else {
+            String[] lines = Objects.requireNonNull(content).split("\n"); // массив строк
+            for (int i = 1; i < lines.length; i++) {
+                String line = lines[i];
+                String[] parts = line.split(",");
+                String itemName = parts[0];
+                boolean isExpense = Boolean.parseBoolean(parts[1]);
+                int quantity = Integer.parseInt(parts[2]);
+                int sumOfOne = Integer.parseInt(parts[3]);
+                if (!months.containsKey(itemName)) {
+                    months.put(itemName, new MonthData(itemName, quantity, sumOfOne, isExpense));
+                }
+                MonthData oneData = months.get(itemName);
+                if (isExpense) {
+                    oneData.expense = quantity * sumOfOne;
+                } else {
+                    oneData.income = quantity * sumOfOne;
+                }
             }
         }
     }
