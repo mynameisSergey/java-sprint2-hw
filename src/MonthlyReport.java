@@ -1,17 +1,18 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Objects;
 
 
 public class MonthlyReport {
-
+    int month;
+    public MonthlyReport(int month) {
+        this.month = month;
+    }
     public HashMap<String, MonthData> months = new HashMap<>();
 
     public void oneMonthReport(String path) {
-        String content = readFileContentsOrNull(path);
-        if (content == null) {
+        String content = YearlyReport.readFileContentsOrNull(path);
+        if (content == null || content.isEmpty()) {
+            System.out.println("Файл пуст или не найден.");
         } else {
             String[] lines = Objects.requireNonNull(content).split("\n"); // массив строк
             for (int i = 1; i < lines.length; i++) {
@@ -34,17 +35,7 @@ public class MonthlyReport {
         }
     }
 
-    private String readFileContentsOrNull(String monthPath) {
-        try {
-            return Files.readString(Path.of(monthPath));
-        } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
-            return null;
-        }
-    }
-
-
-    public Integer monthIncome() { // расчет дохода по месяцу
+     Integer monthIncome() { // расчет дохода по месяцу
         int income = 0;
         for (MonthData oneMonth : months.values()) {
             income += oneMonth.income;
@@ -60,29 +51,38 @@ public class MonthlyReport {
         return expense;
     }
 
-    public String maxProfit() { // максимальная прибыль за товар
+    public void maxProfit() { // максимальная прибыль за товар
         int max = 0;
         String name = "";
-        for (String itemName : months.keySet()) {
-            MonthData monthData = months.get(itemName);
-            if (max < monthData.income) {
+        for (MonthData monthData  : months.values()) {
+                if (max < monthData.income) {
                 max = monthData.income;
                 name = monthData.itemName;
             }
         }
-        return name + " " + max;
+        if (max > 0) { // Проверяем, были ли расходы
+            System.out.println("Больше всего прибыли за " + name + " на общую сумму " + max);
+        } else {
+            System.out.println("Нет данных о расходах.");
+        }
+
     }
 
-    public String maxSpending() { // максимальная трата на товар
+    public void maxExpense() { // максимальная трата на товар
         int max = 0;
         String name = "";
-        for (String itemName : months.keySet()) {
-            MonthData monthData = months.get(itemName);
+
+        for (MonthData monthData : months.values()) {
             if (max < monthData.expense) {
                 max = monthData.expense;
                 name = monthData.itemName;
             }
         }
-        return name + " " + max;
+
+        if (max > 0) { // Проверяем, были ли расходы
+            System.out.println("Больше всего потратили на " + name + " на общую сумму " + max);
+        } else {
+            System.out.println("Нет данных о расходах.");
         }
+    }
 }

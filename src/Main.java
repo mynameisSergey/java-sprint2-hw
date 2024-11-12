@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -6,91 +7,89 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Введите команду");
         Scanner scanner = new Scanner(System.in);
-        YearlyReport yearlyReport = null;
-        MonthlyReport monthlyReport = null;
-        ArrayList<MonthlyReport> oneMonth = new ArrayList<>();
+        ArrayList<YearlyReport> yearlyReport = new ArrayList<>();
+        ArrayList<MonthlyReport> monthlyReport = new ArrayList<>();
+        int command;
 
-        while (true) {
+        do {
             printMenu();
-            int command = scanner.nextInt();
-            if (command == 1) {
+            command = scanner.nextInt();
 
-                    if (monthlyReport == null) {
-                        for (int m = 1; m <= 3; m++) {
-                            monthlyReport = new MonthlyReport();
-                            monthlyReport.oneMonthReport("resources/m.20210" + m + ".csv");
-                            oneMonth.add(monthlyReport);
+            switch (command) {
+                case 1:
+                    for (int m = 1; m <= 3; m++) {
+                        String monthPath = "resources/m.20210" + m + ".csv";
+                        MonthlyReport monthData = new MonthlyReport(m - 1);
+                        monthData.oneMonthReport(monthPath);
+                        monthlyReport.add(monthData);
                         System.out.println("Отчет за месяц " + m + " считан");
                     }
-                    } else {
-                        System.out.println("Произошда ошибка. Такого отчета не существует или он уже считан");
-                    }
-                }
-
-            if (command == 2) {
-                if (yearlyReport == null) {
-                    yearlyReport = new YearlyReport(2021, "resources/y.2021.csv");
-                    yearlyReport.yearMonth();
+                    break;
+                case 2:
+                    String path = "resources/y.2021.csv";
+                    YearlyReport report = new YearlyReport(2021);
+                    report.yearReport(path);
+                    yearlyReport.add(report);
+                    System.out.printf("Отчёт за %d год считан.%n", 2021);
+                    break;
+                case 3 :
+                if (monthlyReport.size() != 3) {
+                    System.out.println("Считайте ежемесячные отчеты.");
+                } else if (yearlyReport.size() < 1 || yearlyReport.get(0).monthsData.isEmpty()) {
+                    System.out.println("Считайте годовой отчёт.");
                 } else {
-                        System.out.println("Произошда ошибка. Такого отчета не существует или он уже считан");
-                }
-            }
 
-            if (command == 3) {
-                boolean hasMistake = true;
-                    if ((oneMonth.size() == 3) && (yearlyReport != null) && (!yearlyReport.monthsData.isEmpty())) {
-
+                    boolean hasMistake = true;
                     for (int i = 0; i < 3; i++) {
 
-                        boolean checkReportIncome = (oneMonth.get(i).monthIncome() == yearlyReport.sumIncome(i + 1));
-                        boolean checkReportExpense = (oneMonth.get(i).monthExpense() == yearlyReport.sumExpense(i + 1));
+                        boolean checkReportIncome = (Objects.equals(monthlyReport.get(i).monthIncome(), yearlyReport.get(0).sumProfitMonthOfYear(i + 1)));
+                        boolean checkReportExpense = (Objects.equals(monthlyReport.get(i).monthExpense(), yearlyReport.get(0).sumExpensesMonthOfYear(i + 1)));
 
                         if (!checkReportIncome || !checkReportExpense) {
                             hasMistake = false;
                             System.out.println("В " + (i + 1) + " месяце допущена ошибка");
                         } else {
-                            System.out.println("Данные за " + (i+1) + " ммесяц сверены успешно");
+                            System.out.println("Данные за " + (i + 1) + " месяц сверены успешно");
                         }
                     }
                     if (hasMistake) {
                         System.out.println("Сверка отчетов завершена успешно");
-                    }
                     } else {
                         System.out.println("Загружены не все отчеты. Повторите попытку снова.");
-                }
-            }
-                    if (command == 4) {
-
-                            if ((oneMonth.size() == 3) && (yearlyReport != null) && (!yearlyReport.monthsData.isEmpty())) {
-                                for (int i = 0; i < 3; i++) {
-                                System.out.println("Данные за " + (i + 1) + " месяц:");
-                                System.out.println("Самая высокая прибыль - " + oneMonth.get(i).maxProfit() + " руб.");
-                                System.out.println("Самая большая трата - " + oneMonth.get(i).maxSpending() + " руб.");
-                            }
-                        } else {
-                                System.out.println("Считаны не все отчеты. Необходимо считать месячные отчеты и годовые, после этого повторите попытку.");
-                                }
-                        }
-
-                    if (command == 5) {
-                        if ((null != yearlyReport) && (!yearlyReport.monthsData.isEmpty())) {
-                        System.out.println("Информация об отчете за 2021 год");
-                        yearlyReport.incomeYear();
-                        yearlyReport.expenseYear();
-                        yearlyReport.monthProfit();
-                    } else {
-                            System.out.println("Не считан годовой отчет");
-                        }
                     }
-            if (command == 0) {
-                System.out.println("До новых встречь!");
-                break;
-            }
-
                 }
-            }
+                    break;
+                case 4 :
+                if (monthlyReport.size() != 3) {
+                    System.out.println("Считайте ежемесячные отчеты.");
+                } else if (yearlyReport.size() < 1 || yearlyReport.get(0).monthsData.isEmpty()) {
+                    System.out.println("Считайте годовой отчёт.");
+                } else {
+                    for (int i = 0; i < 3; i++) {
+                        System.out.println("Данные за " + (i + 1) + " месяц:");
+                        monthlyReport.get(i).maxProfit();
+                        monthlyReport.get(i).maxExpense();
+                    }
+                }
+                    break;
+
+                 case 5 :
+                if (yearlyReport.size() < 1 || yearlyReport.get(0).monthsData.isEmpty()) {
+                    System.out.println("Считайте годовой отчёт.");
+                } else {
+                    System.out.println("Информация об отчете за 2021 год");
+                    yearlyReport.get(0).differentProfit();
+                    yearlyReport.get(0).differentExpenses();
+                    yearlyReport.get(0).monthProfit();
+                }
+                     break;
+                default:
+                }
+        } while (command != 0);
+        scanner.close();
+    }
+
 
         public static void printMenu() {
             System.out.println("Выберите действие, которое необходимо выполнить:");
